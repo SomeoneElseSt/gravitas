@@ -26,13 +26,25 @@ def initialize_earth_engine() -> dict[str, str] | None:
                 credentials = ee.ServiceAccountCredentials(
                     service_account_email, key_data=json.dumps(key_data)
                 )
-            else:
-                # Key provided as file path
-                credentials = ee.ServiceAccountCredentials(
-                    service_account_email, key_file=service_account_key_path
-                )
+            elif service_account_key_path:
+                # Key provided as file path - read the file
+                with open(service_account_key_path, 'r') as f:
+                    key_data = json.load(f)
 
+                # Debug: print what we're using
+                print(f"DEBUG: Using service account: {service_account_email}")
+                print(f"DEBUG: Project ID in key: {key_data.get('project_id')}")
+
+                credentials = ee.ServiceAccountCredentials(
+                    service_account_email, key_data=json.dumps(key_data)
+                )
+            else:
+                return {"error": "No service account key provided", "detail": ""}
+
+            # Initialize with credentials only (no project parameter needed)
+            print("DEBUG: Initializing Earth Engine with service account")
             ee.Initialize(credentials)
+            print("DEBUG: Earth Engine initialized successfully")
             return None
 
         except Exception as e:
@@ -58,13 +70,9 @@ def get_ee_instance():
     Initializes EE if not already initialized.
     Returns (ee_module, error_dict).
     """
-    try:
-        # Check if already initialized
-        ee.Number(1).getInfo()
-        return ee, None
-    except Exception:
-        # Not initialized, try to initialize
-        error = initialize_earth_engine()
-        if error:
-            return None, error
-        return ee, None
+    # Always initialize to ensure we use the correct credentials
+    # EE caches initialization, so this is safe to call multiple times
+    error = initialize_earth_engine()
+    if error:
+        return None, error
+    return ee, None
