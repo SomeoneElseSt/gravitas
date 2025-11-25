@@ -19,21 +19,34 @@ async function apiRequest<T>(
 ): Promise<{ data: T | null; error: ErrorResponse | null }> {
   const url = `${API_BASE_URL}${endpoint}`;
 
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      "Content-Type": "application/json",
-      ...options?.headers,
-    },
-  });
+  console.log(`[API] Fetching: ${url}`);
 
-  if (!response.ok) {
-    const errorData = (await response.json()) as ErrorResponse;
-    return { data: null, error: errorData };
+  try {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+        ...options?.headers,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = (await response.json()) as ErrorResponse;
+      console.error(`[API] Error response:`, errorData);
+      return { data: null, error: errorData };
+    }
+
+    const data = (await response.json()) as T;
+    console.log(`[API] Success:`, data);
+    return { data, error: null };
+  } catch (err) {
+    console.error(`[API] Network error:`, err);
+    const error: ErrorResponse = {
+      error: "Network Error",
+      detail: err instanceof Error ? err.message : "Failed to connect to API",
+    };
+    return { data: null, error };
   }
-
-  const data = (await response.json()) as T;
-  return { data, error: null };
 }
 
 /**
