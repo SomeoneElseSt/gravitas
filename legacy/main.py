@@ -10,7 +10,7 @@ import io #ADD ME
 
 
 
-# to initialize this project locally, follow these steps:
+# To initialize this project locally, follow these steps:
 
 # 1. Create a virtual environment or .venv in your file  
 # 2. Install the required libraries above with pip install ee streamlit geemap datetime setuptools earthengine-api folium
