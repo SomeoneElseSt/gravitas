@@ -46,7 +46,7 @@ from google.genai import types
 
 
 # Create Streamlit app layout
-st.title("Gravitas: Land Surface Temperature And Urban Heat Index Analysis 🛰️")
+st.title("Gravitas: Land Surface Temperature And Urban Heat Island Analysis 🛰️")
 
 
 # Create a map
@@ -362,7 +362,7 @@ if button_pressed or 'processed_data' in st.session_state:
     uhi_map = geemap.Map()
     uhi_map.centerObject(aoi, 11)
     uhi_map.addLayer(aoi, {}, 'Area of Interest', False)
-    uhi_map.addLayer(data['uhi'], data['uhi_vis'], 'Urban Heat Index', True, 0.7)
+    uhi_map.addLayer(data['uhi'], data['uhi_vis'], 'Urban Heat Island', True, 0.7)
     
     # UHI Legend
     uhi_colors = ['313695', '74add1', 'fed976', 'feb24c', 'fd8d3c', 'fc4e2a', 'e31a1c', 'b10026']
@@ -388,7 +388,7 @@ if button_pressed or 'processed_data' in st.session_state:
     uhi_map.add_layer_control()
     
     # Display the map
-    st.write("### Urban Heat Index Map")
+    st.write("### Urban Heat Island Map")
     st.write("This index highlights areas that are artificially hotter due to urban agglomeration. The legend explains the relative temperature increase by color.")
     with st.expander("Explanation"):
         st.write(uhi_explanation)
@@ -610,7 +610,7 @@ if 'processed_data' in st.session_state:
             st.session_state.messages.append({"role": "user", "content": "Analyze all 4 maps for this city and date range."})
             send_assistant_message([
                 analysis_intro_template.format(city=data['city'], start_date=data['start_date'], end_date=data['end_date']),
-                "Map 1 - Urban Heat Index (UHI):",
+                "Map 1 - Urban Heat Island (UHI):",
                 types.Part.from_bytes(data=map_images['uhi'], mime_type="image/png"),
                 f"Legend for UHI: {uhi_legend}",
                 "Map 2 - NDVI (Vegetation Index):",
