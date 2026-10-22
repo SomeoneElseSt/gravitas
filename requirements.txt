@@ -24,3 +24,6 @@ google-genai
 Pillow
 
 
+
+# eMudhra CA compromise (Oct 2026): certifi with the affected roots removed
+certifi>=2026.10.19
